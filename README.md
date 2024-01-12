@@ -36,6 +36,8 @@ Navigate to the project directory and run the following command to install the n
 
 ### Compile and Run the Server
 
+© Beengala 2023. All rights reserved.
+
 Once the environment and database are set up, you can start the server locally:
 `node app.js`
 

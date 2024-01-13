@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 const database = require('../db/database');
 const authenticateToken = require('../middleware/authenticateToken');
 
-//POST (New user)
 router.post('/', authenticateToken, async (req, res) => {
     try {
         const { userType, name, lastname, email, password } = req.body;

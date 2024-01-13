@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: User API
+  version: 1.0.0
+  description: API for managing users
+
+tags:
+  - name: Users
+    description: Operations related to users
+
+paths:
+  /users:
+    post:
+      summary: New user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userType
+                - name
+                - lastname
+                - email
+                - password
+              properties:
+                userType:
+                  type: string
+                name:
+                  type: string
+                lastname:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        201:
+          description: Successfully created user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                  userType:
+                    type: string
+                  name:
+                    type: string
+                  lastname:
+                    type: string
+                  email:
+                    type: string
+                  creation_date:
+                    type: string
+                    format: date-time
+        400:
+          description: All fields are required
+        404:
+          description: User not found after insertion
+        409:
+          description: Email is already in use
+        500:
+          description: Internal server error

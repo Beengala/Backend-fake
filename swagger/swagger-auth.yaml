@@ -9,6 +9,7 @@ tags:
     description: Endpoints for authentication
 
 paths:
+  paths:
   /auth/login:
     post:
       summary: User login
@@ -35,27 +36,68 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                  user:
-                    type: object
-                    properties:
-                      userId:
-                        type: integer
-                      email:
-                        type: string
-                        format: email
-                      userType:
-                        type: string
-                      name:
-                        type: string
-                      lastname:
-                        type: string
+                oneOf:
+                  - $ref: '#/components/schemas/Artist'
+                  - $ref: '#/components/schemas/Buyer'
         400:
           description: Email and password are required
         401:
           description: Incorrect email or password
         500:
           description: Internal server error
+
+components:
+  schemas:
+    Artist:
+      type: object
+      properties:
+        userId:
+          type: integer
+        userType:
+          type: string
+        name:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        semblance:
+          type: string
+        art_style:
+          type: string
+        birthday:
+          type: string
+          format: date
+        origin:
+          type: string
+        sex:
+          type: string
+        city:
+          type: string
+
+    Buyer:
+      type: object
+      properties:
+        userId:
+          type: integer
+        userType:
+          type: string
+        name:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        buyer_type:
+          type: string
+        art_styles:
+          type: string
+        birthday:
+          type: string
+          format: date
+        origin:
+          type: string
+        sex:
+          type: string
+        city:
+          type: string

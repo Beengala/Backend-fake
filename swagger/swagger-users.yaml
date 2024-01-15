@@ -42,7 +42,7 @@ paths:
 
   /users/{userId}:
     delete:
-      summary: Delete a user and their associated profile
+      summary: Delete a user
       tags:
         - Users
       parameters:
@@ -61,7 +61,7 @@ paths:
           description: Internal server error
 
     put:
-      summary: Update a user's information
+      summary: Update a user information
       tags:
         - Users
       parameters:

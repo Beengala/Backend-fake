@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: Beengala API
+  version: 1.0.0
+  description: API for Beengala application
+
+tags:
+  - name: Auth
+    description: Endpoints for authentication
+
+paths:
+  /auth/login:
+    post:
+      summary: User login
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login successful, token and user data returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                      email:
+                        type: string
+                        format: email
+                      userType:
+                        type: string
+                      name:
+                        type: string
+                      lastname:
+                        type: string
+        400:
+          description: Email and password are required
+        401:
+          description: Incorrect email or password
+        500:
+          description: Internal server error

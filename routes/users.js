@@ -24,6 +24,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
             if (userRows.length > 0) {
                 res.status(201).json(userRows[0]);
+
             } else {
                 res.status(404).send('User not found after insertion');
             }
@@ -40,5 +41,24 @@ router.post('/', authenticateToken, async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
+
+router.delete('/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const deleteQuery = 'DELETE FROM users WHERE userId = ?';
+        const [result] = await database.query(deleteQuery, [userId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('User not found');
+        }
+
+        res.status(200).send(`User with ID ${userId} deleted successfully`)
+        
+    } catch (err) {
+        console.error(err)
+        res.status(500).send('Internal server error');
+    }
+})
 
 module.exports = router;

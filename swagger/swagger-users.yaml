@@ -75,28 +75,18 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userType:
-                  type: string
-                name:
-                  type: string
-                lastname:
-                  type: string
-                email:
-                  type: string
-              example:
-                userType: "admin"
-                name: "John"
-                lastname: "Doe"
-                email: "john.doe@example.com"
+              oneOf:
+                - $ref: '#/components/schemas/Artist'
+                - $ref: '#/components/schemas/Buyer'
       responses:
         200:
           description: User information updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                oneOf:
+                  - $ref: '#/components/schemas/Artist'
+                  - $ref: '#/components/schemas/Buyer'
         404:
           description: User not found
         500:

@@ -29,9 +29,22 @@ router.post('/login', async (req, res) => {
 
         delete user.password;
 
+        let userProfile = {};
+
+        if (user.userType === 'artist') {
+            const artistQuery = 'SELECT semblance, art_style, birthday, origin, sex, city FROM artists WHERE userId = ?';
+            const [artistData] = await database.query(artistQuery, [user.userId]);
+            userProfile = artistData.length > 0 ? artistData[0] : {};
+
+        } else if (user.userType === 'buyer') {
+            const buyerQuery = 'SELECT buyer_type, art_styles, birthday, origin, sex, city FROM buyers WHERE userId = ?';
+            const [buyerData] = await database.query(buyerQuery, [user.userId]);
+            userProfile = buyerData.length > 0 ? buyerData[0] : {};
+        }
+
         const token = jwt.sign({ userId: user.userId }, process.env.ACCESS_TOKEN_SECRET);
 
-        res.json({ token, user });
+        res.status(200).json({ token, user: {...user, ...userProfile} });
 
     } catch (err) {
         console.error(err);

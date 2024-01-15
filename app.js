@@ -2,8 +2,8 @@
 require('dotenv').config();
 
 const express = require('express');
-const db = require('./db/database');
-const userRoutes = require('./routes/users')
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -31,6 +31,7 @@ const app = express();
 
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/auth', authRoutes)
 app.use('/users', userRoutes)
 
 const port = process.env.PORT || 3000;

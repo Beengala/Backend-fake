@@ -11,7 +11,7 @@ tags:
 paths:
   /users:
     post:
-      summary: New user
+      summary: Register a new user
       tags:
         - Users
       requestBody:
@@ -19,31 +19,18 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - userType
-                - name
-                - lastname
-                - email
-                - password
-              properties:
-                userType:
-                  type: string
-                name:
-                  type: string
-                lastname:
-                  type: string
-                email:
-                  type: string
-                password:
-                  type: string
+              oneOf:
+                - $ref: '#/components/schemas/Artist'
+                - $ref: '#/components/schemas/Buyer'
       responses:
         201:
           description: Successfully created user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                oneOf:
+                  - $ref: '#/components/schemas/Artist'
+                  - $ref: '#/components/schemas/Buyer'
         400:
           description: All fields are required
         404:
@@ -117,7 +104,7 @@ paths:
 
 components:
   schemas:
-    User:
+    Artist:
       type: object
       properties:
         userId:
@@ -129,4 +116,44 @@ components:
         lastname:
           type: string
         email:
+          type: string
+        semblance:
+          type: string
+        art_style:
+          type: string
+        birthday:
+          type: string
+          format: date
+        origin:
+          type: string
+        sex:
+          type: string
+        city:
+          type: string
+
+    Buyer:
+      type: object
+      properties:
+        userId:
+          type: integer
+        userType:
+          type: string
+        name:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        buyer_type:
+          type: string
+        art_styles:
+          type: string
+        birthday:
+          type: string
+          format: date
+        origin:
+          type: string
+        sex:
+          type: string
+        city:
           type: string

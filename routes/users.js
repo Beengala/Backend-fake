@@ -7,7 +7,7 @@ const authenticateToken = require('../middleware/authenticateToken');
 
 router.post('/', authenticateToken, async (req, res) => {
     try {
-        const { userType, name, lastname, email, password } = req.body;
+        const { userType, name, lastname, email, password, ...additionalData } = req.body;
 
         if (!userType || !name || !lastname || !email || !password) {
             return res.status(400).send('All fields are required');
@@ -16,15 +16,30 @@ router.post('/', authenticateToken, async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_ROUNDS) || 10);
 
          try {
-            const insertQuery = 'INSERT INTO users (userType, name, lastname, email, password) VALUES (?, ?, ?, ?, ?)';
-            const [result] = await database.query(insertQuery, [userType, name, lastname, email, hashedPassword]);
+            const insertUserQuery = 'INSERT INTO users (userType, name, lastname, email, password) VALUES (?, ?, ?, ?, ?)';
+            const [userResult] = await database.query(insertUserQuery, [userType, name, lastname, email, hashedPassword]);
+            const userId = userResult.insertId;
+            let additionalUserInfo = {};
 
-            const selectQuery = 'SELECT userId, userType, name, lastname, email, creation_date FROM users WHERE userId = ?';
-            const [userRows] = await database.query(selectQuery, [result.insertId]);
+            if (userType === 'artist') {
+                const artistInsertQuery = 'INSERT INTO artists (userId, semblance, art_style, birthday, origin, sex, city) VALUES (?, ?, ?, ?, ?, ?, ?)';
+                await database.query(artistInsertQuery, [userId, additionalData.semblance, additionalData.art_style, additionalData.birthday, additionalData.origin, additionalData.sex, additionalData.city]);
+                additionalUserInfo = { semblance: additionalData.semblance, art_style: additionalData.art_style, birthday: additionalData.birthday, origin: additionalData.origin, sex: additionalData.sex, city: additionalData.city };
+           
+            } else if (userType === 'buyer') {
+                const buyerInsertQuery = 'INSERT INTO buyers (userId, buyer_type, art_styles, birthday, origin, sex, city) VALUES (?, ?, ?, ?, ?, ?, ?)';
+                await database.query(buyerInsertQuery, [userId, additionalData.buyer_type, additionalData.art_styles, additionalData.birthday, additionalData.origin, additionalData.sex, additionalData.city]);
+                additionalUserInfo = { buyer_type: additionalData.buyer_type, art_styles: additionalData.art_styles, birthday: additionalData.birthday, origin: additionalData.origin, sex: additionalData.sex, city: additionalData.city };
+            }
+
+            const selectUserQuery = 'SELECT userId, userType, name, lastname, email, creation_date FROM users WHERE userId = ?';
+            const [userRows] = await database.query(selectUserQuery, [userId]);
 
             if (userRows.length > 0) {
-                res.status(201).json(userRows[0]);
-
+                const user = userRows[0];
+                const response = { ...user, ...additionalUserInfo };
+                res.status(201).json(response);
+                
             } else {
                 res.status(404).send('User not found after insertion');
             }

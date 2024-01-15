@@ -58,21 +58,42 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 router.delete('/:userId', authenticateToken, async (req, res) => {
+    const { userId } = req.params;
+    const connection = await database.getConnection();
+
     try {
-        const { userId } = req.params;
+        await connection.beginTransaction();
 
-        const deleteQuery = 'DELETE FROM users WHERE userId = ?';
-        const [result] = await database.query(deleteQuery, [userId]);
+        const userQuery = 'SELECT userType FROM users WHERE userId = ?';
+        const [users] = await connection.query(userQuery, [userId]);
 
-        if (result.affectedRows === 0) {
+        if (users.length === 0) {
+            await connection.rollback();
+            connection.release();
             return res.status(404).send('User not found');
         }
 
-        res.status(200).send(`User with ID ${userId} deleted successfully`)
-        
+        const userType = users[0].userType;
+
+        if (userType === 'artist') {
+            await connection.query('DELETE FROM artists WHERE userId = ?', [userId]);
+        } else if (userType === 'buyer') {
+            await connection.query('DELETE FROM buyers WHERE userId = ?', [userId]);
+        }
+
+        await connection.query('DELETE FROM users WHERE userId = ?', [userId]);
+
+        await connection.commit();
+        res.status(200).send('User deleted successfully');
+
     } catch (err) {
-        console.error(err)
+        await connection.rollback();
+        connection.release();
+        console.error(err);
         res.status(500).send('Internal server error');
+
+    } finally {
+        connection.release();
     }
 });
 

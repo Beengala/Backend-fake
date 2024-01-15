@@ -42,7 +42,7 @@ paths:
 
   /users/{userId}:
     delete:
-      summary: Delete a user
+      summary: Delete a user and their associated profile
       tags:
         - Users
       parameters:
@@ -54,9 +54,9 @@ paths:
             type: integer
       responses:
         200:
-          description: User deleted successfully
+          description: User and their associated profile (artist or buyer) deleted successfully
         404:
-          description: User not found
+          description: User not found or no associated profile exists
         500:
           description: Internal server error
 

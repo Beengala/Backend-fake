@@ -38,7 +38,7 @@ router.post('/', authenticateToken, async (req, res) => {
             if (userRows.length > 0) {
                 const user = userRows[0];
                 const response = { ...user, ...additionalUserInfo };
-                res.status(201).json(response);
+                res.status(200).json(response);
                 
             } else {
                 res.status(404).send('User not found after insertion');
@@ -100,26 +100,65 @@ router.delete('/:userId', authenticateToken, async (req, res) => {
 router.put('/:userId', authenticateToken, async (req, res) => {
     try {
         const { userId } = req.params;
-        const { userType, name, lastname, email } = req.body;
+        const { userType, name, lastname, email, ...additionalData } = req.body;
 
         if (!userType || !name || !lastname || !email) {
             return res.status(400).send('All fields are required');
         }
 
-        const updatedQuery = 'UPDATE users SET userType = ?, name = ?, lastname = ?, email = ? WHERE userId = ?';
-        const [updatedResult] = await database.query(updatedQuery, [userType, name, lastname, email, userId]);
+        const connection = await database.getConnection();
+        await connection.beginTransaction();
 
-        if (updatedResult.affectedRows === 0) {
-            return res.status(404).send('User not found')
+        try {
+            const updatedUserQuery = 'UPDATE users SET userType = ?, name = ?, lastname = ?, email = ? WHERE userId = ?';
+            await connection.query(updatedUserQuery, [userType, name, lastname, email, userId]);
+
+            if (userType === 'artist') {
+                const updatedArtistQuery = 'UPDATE artists SET semblance = ?, art_style = ?, birthday = ?, origin = ?, sex = ?, city = ? WHERE userId = ?';
+                await connection.query(updatedArtistQuery, [additionalData.semblance, additionalData.art_style, additionalData.birthday, additionalData.origin, additionalData.sex, additionalData.city, userId]);
+            } else if (userType === 'buyer') {
+                const updatedBuyerQuery = 'UPDATE buyers SET buyer_type = ?, art_styles = ?, birthday = ?, origin = ?, sex = ?, city = ? WHERE userId = ?';
+                await connection.query(updatedBuyerQuery, [additionalData.buyer_type, additionalData.art_styles, additionalData.birthday, additionalData.origin, additionalData.sex, additionalData.city, userId]);
+            }
+
+            const selectUserQuery = 'SELECT userId, userType, name, lastname, email FROM users WHERE userId = ?';
+            const [updatedUsers] = await connection.query(selectUserQuery, [userId]);
+
+            if (updatedUsers.length === 0) {
+                await connection.rollback();
+                connection.release();
+                return res.status(404).send('User not found');
+            }
+
+            let userInfo = updatedUsers[0];
+            if (userType === 'artist') {
+                const artistQuery = 'SELECT semblance, art_style, birthday, origin, sex, city FROM artists WHERE userId = ?';
+                const [artistData] = await connection.query(artistQuery, [userId]);
+                if (artistData.length > 0) {
+                    userInfo = { ...userInfo, ...artistData[0] };
+                }
+            } else if (userType === 'buyer') {
+                const buyerQuery = 'SELECT buyer_type, art_styles, birthday, origin, sex, city FROM buyers WHERE userId = ?';
+                const [buyerData] = await connection.query(buyerQuery, [userId]);
+                if (buyerData.length > 0) {
+                    userInfo = { ...userInfo, ...buyerData[0] };
+                }
+            }
+
+            await connection.commit();
+            res.status(200).json(userInfo);
+
+        } catch (err) {
+            await connection.rollback();
+            console.error(err);
+            res.status(500).send('Internal server error');
+
+        } finally {
+            connection.release();
         }
-
-        const selectQuery = 'SELECT userId, userType, name, lastname, email FROM users WHERE userId = ?';
-        const [updatedUser] = await database.query(selectQuery, [userId]);
-        
-        res.status(200).json(updatedUser[0]);
-        
+    
     } catch (err) {
-        console.error(err)
+        console.error(err);
         res.status(500).send('Internal server error');
     }
 });

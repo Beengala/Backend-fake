@@ -59,6 +59,33 @@ router.delete('/:userId', authenticateToken, async (req, res) => {
         console.error(err)
         res.status(500).send('Internal server error');
     }
-})
+});
+
+router.put('/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { userType, name, lastname, email } = req.body;
+
+        if (!userType || !name || !lastname || !email) {
+            return res.status(400).send('All fields are required');
+        }
+
+        const updatedQuery = 'UPDATE users SET userType = ?, name = ?, lastname = ?, email = ? WHERE userId = ?';
+        const [updatedResult] = await database.query(updatedQuery, [userType, name, lastname, email, userId]);
+
+        if (updatedResult.affectedRows === 0) {
+            return res.status(404).send('User not found')
+        }
+
+        const selectQuery = 'SELECT userId, userType, name, lastname, email FROM users WHERE userId = ?';
+        const [updatedUser] = await database.query(selectQuery, [userId]);
+        
+        res.status(200).json(updatedUser[0]);
+        
+    } catch (err) {
+        console.error(err)
+        res.status(500).send('Internal server error');
+    }
+});
 
 module.exports = router;

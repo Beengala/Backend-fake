@@ -43,21 +43,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  userId:
-                    type: integer
-                  userType:
-                    type: string
-                  name:
-                    type: string
-                  lastname:
-                    type: string
-                  email:
-                    type: string
-                  creation_date:
-                    type: string
-                    format: date-time
+                $ref: '#/components/schemas/User'
         400:
           description: All fields are required
         404:
@@ -66,6 +52,7 @@ paths:
           description: Email is already in use
         500:
           description: Internal server error
+
   /users/{userId}:
     delete:
       summary: Delete a user
@@ -84,4 +71,62 @@ paths:
         404:
           description: User not found
         500:
-          description: Internal server error  
+          description: Internal server error
+
+    put:
+      summary: Update a user's information
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userType:
+                  type: string
+                name:
+                  type: string
+                lastname:
+                  type: string
+                email:
+                  type: string
+              example:
+                userType: "admin"
+                name: "John"
+                lastname: "Doe"
+                email: "john.doe@example.com"
+      responses:
+        200:
+          description: User information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+        userType:
+          type: string
+        name:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string

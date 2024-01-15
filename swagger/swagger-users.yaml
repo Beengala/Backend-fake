@@ -66,3 +66,22 @@ paths:
           description: Email is already in use
         500:
           description: Internal server error
+  /users/{userId}:
+    delete:
+      summary: Delete a user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Unique ID of the user to delete
+          schema:
+            type: integer
+      responses:
+        200:
+          description: User deleted successfully
+        404:
+          description: User not found
+        500:
+          description: Internal server error  

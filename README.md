@@ -61,7 +61,3 @@ Refer to the Swagger documentation for detailed API usage.
 
 ### Authors
 Jonathan Vazquez - Initial work - Beengala
-
-### License
-This project is licensed under the MIT License - see the LICENSE.md file for details.
-

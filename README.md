@@ -1,6 +1,6 @@
 # Backend Fake Project (Only Development) 
 
-This is a Node.js backend application designed to provide a RESTful API for managing artists, users, and authentication. It includes endpoints for various operations and integrates with a database for data persistence.
+This is a Node.js backend application designed to provide a RESTful API for managing beengala services. It includes endpoints for various operations and integrates with a database for data persistence.
 
 ## Getting Started
 
@@ -45,14 +45,14 @@ npm start
 
 The server should now be running on http://localhost:3000.
 
-### Usage
-This API provides endpoints for managing artists, users, and authentication. Here are some examples of how to use the API:
+### Services
 
 - artists: Operations related to Artists.
 - auth: Operations related to authentication.
 - users: Operations related to users.
 
 Refer to the Swagger documentation for detailed API usage.
+http://localhost:3000/api-docs/#/
 
 ### Built With
 - Express.js - The web framework used

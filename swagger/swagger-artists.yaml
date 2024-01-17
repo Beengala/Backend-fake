@@ -13,7 +13,7 @@ paths:
     get:
       summary: Get a list of all artists
       tags:
-        - Artist
+        - Artists
       security:
         - bearerAuth: []
       responses:
@@ -25,6 +25,34 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Artist'
+        401:
+          description: Unauthorized access - valid authentication token required
+        500:
+          description: Internal server error
+
+  /artists/{id}:
+    get:
+      summary: Get a specific artist by ID
+      tags:
+        - Artists
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique ID of the artist
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Artist information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        404:
+          description: Artist not found
         401:
           description: Unauthorized access - valid authentication token required
         500:

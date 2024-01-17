@@ -1,44 +1,67 @@
-# Beengala Fake Server (Only Development)
+# Backend Fake Project (Only Development) 
 
-This project is a mock server designed for local development environments. It simulates a backend application and provides a simple framework for testing and development purposes. The server is not intended for production use and is optimized for ease of setup and use within a local development context. It supports basic database operations and serves as a starting point for backend development, offering a controlled environment to develop and test frontend applications, APIs, or other client-side projects that require server interaction.
-## Prerequisites
+This is a Node.js backend application designed to provide a RESTful API for managing artists, users, and authentication. It includes endpoints for various operations and integrates with a database for data persistence.
 
-Before you begin, ensure you have installed the following:
-- Node.js (download from [here](https://nodejs.org/))
-- MySQL (installation instructions for [Windows](https://dev.mysql.com/doc/refman/8.0/en/windows-installation.html) and [macOS](https://dev.mysql.com/doc/refman/8.0/en/macos-installation.html))
-- A code editor like Visual Studio Code (optional but recommended, available [here](https://code.visualstudio.com/))
+## Getting Started
 
-## Environment Setup
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Clone the Repository
+### Prerequisites
 
-First, clone the repository to your local machine using Git:
-`git clone git@github.com:Beengala/Backend-fake.git`
+What things you need to install the software and how to install them:
 
-### Install Dependencies
+- Node.js
+- npm (Node Package Manager)
+- A MySQL database server
 
-Navigate to the project directory and run the following command to install the necessary dependencies:
-`npm install`
+### Installing
 
-### Database Configuration
+A step-by-step series of examples that tell you how to get a development environment running.
 
-#### Windows/macOS
+First, clone the repository:
+```
+git clone https://github.com/Beengala/Backend-fake.git
+```
 
-1. Install MySQL on your system. Follow the instructions mentioned in the Prerequisites. For better control and easier management, you can download a MySQL plugin from the Visual Studio Code marketplace.
-2. The project should come with a pre-configured database. The project lead will provide you with the necessary credentials. Once you have them, create a .env file in the root of your project and add the following lines, replacing the values with the credentials provided:
+Navigate to the project directory:
+```
+cd Backend-fake
+```
 
-`DB_HOST=localhost`
-`DB_USER=your_mysql_username`
-`DB_PASS=your_mysql_password`
-`DB_NAME=your_database_name`
+Install the required dependencies:
+```
+npm install
+```
 
-4. Ensure that your `.env` file is listed in `.gitignore` to keep your credentials secure.
+Install the required dependencies:
+```
+Create a .env file in the project root and set your environment variables (e.g., database connection string).
+```
 
-### Compile and Run the Server
+Start the server:
+```
+npm start
+```
 
-© Beengala 2023. All rights reserved.
+The server should now be running on http://localhost:3000.
 
-Once the environment and database are set up, you can start the server locally:
-`node app.js`
+### Usage
+This API provides endpoints for managing artists, users, and authentication. Here are some examples of how to use the API:
 
-This will start the server on `http://localhost:3000` (or whichever port you have configured).
+- artists: Operations related to Artists.
+- auth: Operations related to authentication.
+- users: Operations related to users.
+
+Refer to the Swagger documentation for detailed API usage.
+
+### Built With
+- Express.js - The web framework used
+- Node.js - The runtime environment
+- MySQL - The database used
+
+### Authors
+Jonathan Vazquez - Initial work - Beengala
+
+### License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
